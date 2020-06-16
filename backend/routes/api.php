@@ -17,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/posts', 'AdminController@index');
+Route::post('/edit/{id}', 'AdminController@edit');
+Route::post('/add', 'AdminController@add');

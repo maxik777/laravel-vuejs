@@ -7,7 +7,10 @@ import 'view-design/dist/styles/iview.css';
 import { MdButton, MdContent, MdTabs } from 'vue-material/dist/components'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import common from './common'
 
+
+Vue.mixin(common)
 Vue.use(MdButton)
 Vue.use(MdContent)
 Vue.use(MdTabs)
