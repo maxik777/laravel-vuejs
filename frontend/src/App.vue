@@ -1,13 +1,41 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/register">Register</router-link>
+
+    <md-toolbar class="md-primary md-toolbar-section-end" md-elevation="1">
+      <h3 class="md-title md-toolbar-section-start" style="flex: 1">Title</h3>
+      <router-link to="/"><md-button >Home</md-button></router-link>
+      <router-link to="/login" v-if="!isLogged"><md-button> Login</md-button> </router-link>
+      <router-link to="/register" v-if="!isLogged"><md-button> Register </md-button></router-link>
+      <md-button style="float: right; cursor: pointer; font-weight: bold" type="button" @click="logout()" v-if="isLogged">
+        Logout
+      </md-button>
+    </md-toolbar>
+
+    <div style="padding: 30px">
+      <router-view/>
     </div>
-    <router-view/>
+
   </div>
 </template>
+
+
+<script>
+  import { mapGetters } from 'vuex'
+
+  export default {
+    computed: {
+      ...mapGetters([
+        'isLogged'
+      ])
+    },
+
+    methods: {
+      logout () {
+        this.$store.dispatch('logout')
+      }
+    }
+  }
+</script>
 
 <style>
 #app {
@@ -16,19 +44,15 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  padding: 0 30px;
 }
 
-#nav {
-  padding: 30px;
-}
 
-#nav a {
+a .md-button-content{
   font-weight: bold;
-  color: #2c3e50;
+  color: black!important;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+ a.router-link-exact-active .md-button-content{
+  color: white!important;
 }
 </style>

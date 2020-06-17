@@ -1,21 +1,21 @@
 <template>
-  <div>
+  <div v-if="isLogged">
     <div style="display: flex; justify-content: space-between; padding-bottom: 5px">
       <Button type="success" @click="showAddModal">Add new post</Button>
       <div style="opacity: 0">Middle</div>
       <div style="opacity: 0">Right</div>
     </div>
 
-    <Table border :columns="columns12" :data="posts">
+    <Table  border :columns="columns12" :data="posts">
       <template slot-scope="{ row }" slot="name">
         <strong>{{ row.name }}</strong>
         <strong>{{ row.description }}</strong>
         <strong>{{ row.created_at }}</strong>
       </template>
-      <template slot-scope="{ row, index }" slot="action">
-        <Button type="primary" size="small" style="margin-right: 5px" @click="showEditModal(row,index)">View</Button>
-        <Button type="error" size="small" @click="showDeleteModal(row, index)">Delete</Button>
-      </template>
+        <template slot-scope="{ row, index }" slot="action" >
+          <Button type="primary" size="small" style="margin-right: 5px" @click="showEditModal(row,index)">View</Button>
+          <Button type="error" size="small" @click="showDeleteModal(row, index)">Delete</Button>
+        </template>
     </Table>
     <!--EDIT MODAL HTML-->
     <Modal
@@ -74,11 +74,17 @@
     </Modal>
 
   </div>
+  <div v-else>
+    <p>You have to be logged in to make CRUD operations!</p>
+  </div>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+
 
   export default {
+
     data () {
       return {
         columns12: [
@@ -124,8 +130,11 @@
       }
     },
 
-
-
+    computed: {
+      ...mapGetters([
+        'isLogged'
+      ])
+    },
 
     methods: {
       async all(){
@@ -145,7 +154,7 @@
         )
         if(res.status===200){
           this.posts.unshift(res.data)
-          this.s('Tag has been added successfully!')
+          this.s('Post has been updated successfully!')
           this.editModal = false
           this.all()
         }else{
@@ -170,7 +179,7 @@
         )
         if(res.status===200){
           this.posts.unshift(res.data)
-          this.s('Tag has been added successfully!')
+          this.s('Post has been added successfully!')
           this.addModal = false
           this.all()
         }else{
@@ -191,7 +200,7 @@
         )
         if(res.status===200){
           this.posts.unshift(res.data)
-          this.s('Tag has been removed successfully!')
+          this.s('Post has been removed successfully!')
           this.deleteModal = false
           this.all()
         }else{

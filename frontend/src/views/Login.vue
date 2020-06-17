@@ -1,9 +1,9 @@
 <template>
   <div style="display:flex; justify-content: center">
-    <Form style="display: flex;justify-content: center; flex-direction: column; max-width: 500px" ref="formInline" :model="formInline" :rules="ruleInline" inline>
-      <FormItem prop="user">
-        <Input type="text" v-model="formInline.user" placeholder="Username">
-          <Icon type="ios-person-outline" slot="prepend"></Icon>
+    <Form style="display: flex;justify-content: center; flex-direction: column; width: 400px" ref="formInline" :model="formInline" :rules="ruleInline" inline>
+      <FormItem prop="email">
+        <Input type="text" v-model="formInline.email" placeholder="E-mail">
+          <Icon type="ios-at-outline" slot="prepend"> slot="prepend"></Icon>
         </Input>
       </FormItem>
       <FormItem prop="password">
@@ -12,7 +12,7 @@
         </Input>
       </FormItem>
       <FormItem>
-        <Button type="primary" @click="handleSubmit('formInline')">Signin</Button>
+        <Button type="primary" @click="handleSubmit">Signin</Button>
       </FormItem>
     </Form>
   </div>
@@ -23,12 +23,13 @@
     data () {
       return {
         formInline: {
-          user: '',
+          email: '',
           password: ''
         },
         ruleInline: {
-          user: [
-            { required: true, message: 'Please fill in the user name', trigger: 'blur' }
+          email: [
+            { required: true, message: 'Please fill in the email.', trigger: 'blur' },
+            { type: 'email', trigger: 'blur' }
           ],
           password: [
             { required: true, message: 'Please fill in the password.', trigger: 'blur' },
@@ -38,14 +39,33 @@
       }
     },
     methods: {
-      handleSubmit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.$Message.success('Success!');
-          } else {
-            this.$Message.error('Fail!');
-          }
-        })
+      async handleSubmit() {
+        if ((this.formInline.password.trim() == '') && (this.formInline.email.trim() == '')) return this.e('All fields are required')
+        if (this.formInline.email.trim() == '') return this.e('email is required')
+        if (this.formInline.password.trim() == '') return this.e('password is required')
+        const res = await this.callApi('post', 'http://127.0.0.1:8000/api/login',
+                this.formInline
+        )
+        if (res.status === 201) {
+          this.s('Auth complete!')
+          this.login()
+        } else {
+          this.swr()
+        }
+
+      },
+      login () {
+        this.$store
+                .dispatch('login', {
+                  email: this.formInline.email,
+                  password: this.formInline.password
+                })
+                .then(() => {
+                  this.$router.push({ name: 'About' })
+                })
+                .catch(err => {
+                  console.log(err)
+                })
       }
     }
   }
