@@ -46,4 +46,10 @@ class AdminController extends Controller
 
         );
     }
+
+    public function delete($id)
+    {
+        DB::table('posts')->where('id', $id)->delete();
+        return response()->json('success',200);
+    }
 }

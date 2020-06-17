@@ -14,7 +14,7 @@
       </template>
       <template slot-scope="{ row, index }" slot="action">
         <Button type="primary" size="small" style="margin-right: 5px" @click="showEditModal(row,index)">View</Button>
-        <Button type="error" size="small" @click="modal2=true">Delete</Button>
+        <Button type="error" size="small" @click="showDeleteModal(row, index)">Delete</Button>
       </template>
     </Table>
     <!--EDIT MODAL HTML-->
@@ -59,7 +59,7 @@
     </Modal>
 
     <!--DELETE MODAL-->
-    <Modal v-model="modal2" width="360">
+    <Modal v-model="deleteModal" width="360">
       <p slot="header" style="color:#f60;text-align:center">
         <Icon type="ios-information-circle"></Icon>
         <span>Delete confirmation</span>
@@ -69,7 +69,7 @@
         <p>Will you delete it?</p>
       </div>
       <div slot="footer">
-        <Button type="error" size="large" long :loading="modal_loading" @click="del">Delete</Button>
+        <Button type="error" size="large" @click="del(id)" long :disabled="isAdding" :loading="isAdding">{{isAdding ? 'Deleting..' : 'Delete'}}</Button>
       </div>
     </Modal>
 
@@ -119,7 +119,7 @@
         },
         editModal : false,
         addModal : false,
-        modal2:false,
+        deleteModal:false,
         isAdding : false,
       }
     },
@@ -187,27 +187,18 @@
         }
       },
       async del(id){
-        const res = await this.callApi('post', 'http://127.0.0.1:8000/api/edit/'+id,
-                this.editData
+        const res = await this.callApi('post', 'http://127.0.0.1:8000/api/delete/'+id,
         )
         if(res.status===200){
           this.posts.unshift(res.data)
-          this.s('Tag has been added successfully!')
-          this.editModal = false
+          this.s('Tag has been removed successfully!')
+          this.deleteModal = false
           this.all()
         }else{
-          if(res.status==422){
-            if(res.data.errors.name && res.data.errors.description){
-              this.e(res.data.errors.name[0])
-              this.e(res.data.errors.description[0])
-            }
-
-          }else{
             this.swr()
           }
 
-        }
-      },
+        },
 
       showEditModal(row, index){
         let obj = {
@@ -228,8 +219,15 @@
         this.editData = obj
         this.addModal = true
       },
+      showDeleteModal(row, index){
+        this.deleteModal = true
+        this.id = row.id
+        this.index = index
+      },
 
     },
+
+
 
     created: async function(){
       const res = await this.callApi('get', 'http://127.0.0.1:8000/api/posts')
@@ -242,3 +240,11 @@
 
   }
 </script>
+
+<style>
+  @media screen and (max-width:768px) {
+    .ivu-table-wrapper{
+      overflow: auto;
+    }
+  }
+</style>

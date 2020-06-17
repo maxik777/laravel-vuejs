@@ -21,3 +21,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/posts', 'AdminController@index');
 Route::post('/edit/{id}', 'AdminController@edit');
 Route::post('/add', 'AdminController@add');
+Route::post('/delete/{id}', 'AdminController@delete');
