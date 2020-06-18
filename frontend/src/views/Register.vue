@@ -1,8 +1,8 @@
 <template>
     <div style="display:flex; justify-content: center">
-        <Form style="display: flex;justify-content: center; flex-direction: column; max-width: 500px" ref="formInline" :model="formInline" :rules="ruleInline" inline>
+        <Form style="display: flex;justify-content: center; flex-direction: column; width: 400px" ref="formInline" :model="formInline" :rules="ruleInline" inline>
             <FormItem prop="user">
-                <Input type="text" v-model="formInline.user" placeholder="Username">
+                <Input type="text" v-model="formInline.name" placeholder="Username">
                     <Icon type="ios-person-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
@@ -28,13 +28,14 @@
         data () {
             return {
                 formInline: {
-                    user: '',
+                    name: '',
                     email: '',
                     password: ''
                 },
                 ruleInline: {
-                    user: [
-                        { required: true, message: 'Please fill in the user name', trigger: 'blur' }
+                    name: [
+                        { required: true, message: 'Please fill in the user name', trigger: 'blur'},
+                        { type: 'string', min: 2, message: 'The user name length cannot be less than 2 bits', trigger: 'blur'}
                     ],
                     password: [
                         { required: true, message: 'Please fill in the password.', trigger: 'blur' },
@@ -48,15 +49,22 @@
             }
         },
         methods: {
-            handleSubmit(name) {
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                        this.$Message.success('Success!');
-                    } else {
-                        this.$Message.error('Fail!');
-                    }
-                })
-            }
+            async handleSubmit() {
+                if ((this.formInline.name.trim() == '') && (this.formInline.password.trim() == '') && (this.formInline.email.trim() == '')) return this.e('All fields are required')
+                if (this.formInline.name.trim() == '') return this.e('name is required')
+                if (this.formInline.email.trim() == '') return this.e('email is required')
+                if (this.formInline.password.trim() == '') return this.e('password is required')
+                const res = await this.callApi('post', 'http://127.0.0.1:8000/api/register',
+                    this.formInline
+                )
+                if (res.status === 200) {
+                    this.s('Registration was success, please, sign in to manage data!')
+                    this.$router.push({ path: '/login' })
+                } else {
+                    this.swr()
+                }
+
+            },
         }
     }
 </script>

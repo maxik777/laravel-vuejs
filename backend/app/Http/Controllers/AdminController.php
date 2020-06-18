@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
+
 class AdminController extends Controller
 {
     /**
@@ -82,5 +83,27 @@ class AdminController extends Controller
 
 
         return response($response, 201);
+    }
+
+    public function register(Request $request)
+    {
+
+        $this->validate($request,[
+            'name' => 'required',
+            'email' => 'bail|required|email',
+            'password' => 'bail|required|min:6',
+        ]);
+
+
+        $password = bcrypt($request->password);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $password,
+        ]);
+        if ($user){
+            return response()->json('success', 200);
+        }
+            return response()->json('email is unavailable', 422);
     }
 }

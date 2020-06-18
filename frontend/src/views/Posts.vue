@@ -236,8 +236,6 @@
 
     },
 
-
-
     created: async function(){
       const res = await this.callApi('get', 'http://127.0.0.1:8000/api/posts')
       if(res.status==200){

@@ -61,7 +61,7 @@
                   password: this.formInline.password
                 })
                 .then(() => {
-                  this.$router.push({ name: 'About' })
+                  this.$router.push({ name: 'Posts' })
                 })
                 .catch(err => {
                   console.log(err)

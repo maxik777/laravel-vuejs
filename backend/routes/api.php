@@ -21,11 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::get('/posts', 'AdminController@index');
 });
-
 
 Route::post('/edit/{id}', 'AdminController@edit');
 Route::post('/add', 'AdminController@add');
 Route::post('/delete/{id}', 'AdminController@delete');
-Route::post('/login', 'AdminController@login')->name('login');
+Route::post('/login', 'AdminController@login');
+Route::post('/register', 'AdminController@register');
+
